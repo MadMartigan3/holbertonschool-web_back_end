@@ -1,4 +1,4 @@
-#!/usr/bin/python3
+#!/usr/bin/env python3
 """function floor that takes a float n and returns the floor of the float"""
 
 
