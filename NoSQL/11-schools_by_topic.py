@@ -1,4 +1,4 @@
-#!/bin/usr/python3
+#!/bin/usr/env python3
 """ 11-schools_by_topic """
 
 
