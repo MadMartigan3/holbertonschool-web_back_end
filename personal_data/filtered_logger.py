@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Module for filtering and obfuscating sensitive information in log messages."""
+"""Module for filtering and obfuscating sensitive information in log."""
 import re
 from typing import List
 
