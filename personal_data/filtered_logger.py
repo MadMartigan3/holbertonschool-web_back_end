@@ -1,8 +1,11 @@
 #!/usr/bin/env python3
-"""Module for filtering and obfuscating sensitive information in log."""
+"""Module for filtering and obfuscating sensitive information in log"""
 import re
 from typing import List, Tuple
 import logging
+import os
+import mysql.connector
+from mysql.connector import MySQLConnection
 
 
 PII_FIELDS: Tuple[str, ...] = ("name", "email", "phone", "ssn", "password")
@@ -73,3 +76,29 @@ def get_logger() -> logging.Logger:
     handler.setFormatter(RedactingFormatter(list(PII_FIELDS)))
     logger.addHandler(handler)
     return logger
+
+
+def get_db() -> MySQLConnection:
+    """
+    Creates and returns a connector to the secure database.
+
+    Retrieves database credentials from environment variables:
+    - PERSONAL_DATA_DB_USERNAME (default: 'root')
+    - PERSONAL_DATA_DB_PASSWORD (default: '')
+    - PERSONAL_DATA_DB_HOST (default: 'localhost')
+    - PERSONAL_DATA_DB_NAME (required)
+
+    Returns:
+        MySQLConnection object connected to the database
+    """
+    username = os.getenv('PERSONAL_DATA_DB_USERNAME', 'root')
+    password = os.getenv('PERSONAL_DATA_DB_PASSWORD', '')
+    host = os.getenv('PERSONAL_DATA_DB_HOST', 'localhost')
+    database = os.getenv('PERSONAL_DATA_DB_NAME')
+
+    return mysql.connector.connect(
+        user=username,
+        password=password,
+        host=host,
+        database=database
+    )
