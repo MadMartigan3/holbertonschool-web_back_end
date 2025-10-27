@@ -100,30 +100,40 @@ class BasicAuth(Auth):
         Returns:
             User instance or None
         """
-        # Si user_email est None ou pas une string
         if user_email is None or not isinstance(user_email, str):
             return None
 
-        # Si user_pwd est None ou pas une string
         if user_pwd is None or not isinstance(user_pwd, str):
             return None
 
-        # Rechercher les utilisateurs avec cet email
         try:
             users = User.search({'email': user_email})
         except Exception:
             return None
 
-        # Si aucun utilisateur trouvé
         if not users or len(users) == 0:
             return None
 
-        # Récupérer le premier utilisateur (email devrait être unique)
         user = users[0]
 
-        # Vérifier si le mot de passe est valide
         if not user.is_valid_password(user_pwd):
             return None
 
-        # Retourner l'utilisateur
         return user
+
+    def current_user(self, request=None) -> TypeVar('User'):
+        """
+        Retrieves the User instance for a request
+
+        Args:
+            request: Flask request object
+
+        Returns:
+            User instance or None
+        """
+        auth_header = self.authorization_header(request)
+        base64_header = self.extract_base64_authorization_header(auth_header)
+        decoded_header = self.decode_base64_authorization_header(
+            base64_header)
+        user_email, user_pwd = self.extract_user_credentials(decoded_header)
+        return self.user_object_from_credentials(user_email, user_pwd)
