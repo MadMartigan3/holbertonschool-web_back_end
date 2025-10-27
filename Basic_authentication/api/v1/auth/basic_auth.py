@@ -24,19 +24,15 @@ class BasicAuth(Auth):
         Returns:
             The Base64 part after 'Basic ' or None
         """
-        # Si authorization_header est None, retourne None
         if authorization_header is None:
             return None
 
-        # Si authorization_header n'est pas une string, retourne None
         if not isinstance(authorization_header, str):
             return None
 
-        # Si authorization_header ne commence pas par 'Basic '
         if not authorization_header.startswith('Basic '):
             return None
 
-        # Retourne la valeur après 'Basic ' (après l'espace)
         return authorization_header[6:]
 
     def decode_base64_authorization_header(
@@ -51,20 +47,39 @@ class BasicAuth(Auth):
         Returns:
             The decoded value as UTF8 string or None
         """
-        # Si base64_authorization_header est None, retourne None
         if base64_authorization_header is None:
             return None
 
-        # Si base64_authorization_header n'est pas une string, retourne None
         if not isinstance(base64_authorization_header, str):
             return None
 
-        # Essayer de décoder le Base64
         try:
-            # Décoder le Base64
             decoded_bytes = base64.b64decode(base64_authorization_header)
-            # Convertir les bytes en string UTF-8
             return decoded_bytes.decode('utf-8')
         except Exception:
-            # Si ce n'est pas un Base64 valide, retourne None
             return None
+
+    def extract_user_credentials(
+            self,
+            decoded_base64_authorization_header: str) -> (str, str):
+        """
+        Extracts user email and password from Base64 decoded value
+
+        Args:
+            decoded_base64_authorization_header: the decoded Base64 string
+
+        Returns:
+            A tuple (email, password) or (None, None)
+        """
+        if decoded_base64_authorization_header is None:
+            return None, None
+
+        if not isinstance(decoded_base64_authorization_header, str):
+            return None, None
+
+        if ':' not in decoded_base64_authorization_header:
+            return None, None
+
+        credentials = decoded_base64_authorization_header.split(':', 1)
+
+        return credentials[0], credentials[1]
