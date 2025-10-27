@@ -22,24 +22,18 @@ class Auth:
         Returns:
             True if authentication is required, False otherwise
         """
-        # Si path est None, retourne True
         if path is None:
             return True
 
-        # Si excluded_paths est None ou vide, retourne True
         if excluded_paths is None or len(excluded_paths) == 0:
             return True
 
-        # Normaliser le path en ajoutant un / à la fin s'il n'y en a pas
-        # (pour être "slash tolerant")
         if not path.endswith('/'):
             path = path + '/'
 
-        # Vérifier si le path est dans excluded_paths
         if path in excluded_paths:
             return False
 
-        # Si le path n'est pas dans excluded_paths, retourne True
         return True
 
     def authorization_header(self, request=None) -> str:
@@ -50,9 +44,18 @@ class Auth:
             request: Flask request object
 
         Returns:
-            None for now (will be implemented later)
+            The value of Authorization header or None
         """
-        return None
+        # Si request est None, retourne None
+        if request is None:
+            return None
+
+        # Si request ne contient pas la clé Authorization, retourne None
+        if 'Authorization' not in request.headers:
+            return None
+
+        # Sinon, retourne la valeur du header Authorization
+        return request.headers.get('Authorization')
 
     def current_user(self, request=None) -> TypeVar('User'):
         """
