@@ -25,20 +25,20 @@ class Auth:
         # Si path est None, retourne True
         if path is None:
             return True
-        
+
         # Si excluded_paths est None ou vide, retourne True
         if excluded_paths is None or len(excluded_paths) == 0:
             return True
-        
+
         # Normaliser le path en ajoutant un / à la fin s'il n'y en a pas
         # (pour être "slash tolerant")
         if not path.endswith('/'):
             path = path + '/'
-        
+
         # Vérifier si le path est dans excluded_paths
         if path in excluded_paths:
             return False
-        
+
         # Si le path n'est pas dans excluded_paths, retourne True
         return True
 
