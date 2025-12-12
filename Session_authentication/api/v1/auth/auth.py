@@ -1,35 +1,32 @@
 #!/usr/bin/env python3
-"""
-Auth module for the API
-"""
+""" Authentication module for API """
 from flask import request
 from typing import List, TypeVar
+import os
 
 
 class Auth:
-    """
-    Auth class to manage API authentication
-    """
+    """ Template for authentication system """
 
     def require_auth(self, path: str, excluded_paths: List[str]) -> bool:
         """
-        Determines if authentication is required for a given path
-
-        Args:
-            path: the path to check
-            excluded_paths: list of paths that don't require authentication
-
-        Returns:
-            True if authentication is required, False otherwise
+        returns True if the path is not in the list of strings excluded_paths:
+        Returns True if path is None
+        Returns True if excluded_paths is None or empty
+        Returns False if path is in excluded_paths
+        You can assume excluded_paths contains string path always ending by a /
+        This method must be slash tolerant:
+        path=/api/v1/status and path=/api/v1/status/
+        must be returned False if excluded_paths contains /api/v1/status/
         """
         if path is None:
             return True
 
-        if excluded_paths is None or len(excluded_paths) == 0:
+        if not excluded_paths:
             return True
 
-        if not path.endswith('/'):
-            path = path + '/'
+        if path[-1] != '/':
+            path += '/'
 
         if path in excluded_paths:
             return False
@@ -38,33 +35,32 @@ class Auth:
 
     def authorization_header(self, request=None) -> str:
         """
-        Gets the authorization header from the request
-
-        Args:
-            request: Flask request object
-
-        Returns:
-            The value of Authorization header or None
+        If request is None, returns None
+        If request doesn't contain the header key Authorization, returns None
+        Otherwise, return the value of the header request Authorization
         """
-        # Si request est None, retourne None
         if request is None:
             return None
 
-        # Si request ne contient pas la clé Authorization, retourne None
-        if 'Authorization' not in request.headers:
+        if "Authorization" not in request.headers:
             return None
 
-        # Sinon, retourne la valeur du header Authorization
-        return request.headers.get('Authorization')
+        return request.headers.get("Authorization")
 
-    def current_user(self, request=None) -> TypeVar('User'):
+    User = TypeVar("User")
+
+    def current_user(self, request=None) -> User:
         """
-        Gets the current user from the request
-
-        Args:
-            request: Flask request object
-
-        Returns:
-            None for now (will be implemented later)
+        returns None - request will be the Flask request object
         """
         return None
+
+    def session_cookie(self, request=None):
+        """ returns a cookie value from a request """
+        if request is None:
+            return None
+
+        session_name = os.getenv("SESSION_NAME", "_my_session_id")
+
+        return request.cookies.get(session_name)
+    
