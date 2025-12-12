@@ -1,52 +1,50 @@
 #!/usr/bin/env python3
-""" It's my comment """
+"""File contening login route"""
+import os
 from flask import jsonify, request, abort
 from api.v1.views import app_views
 from models.user import User
-import os
 
 
 @app_views.route('/auth_session/login', methods=['POST'], strict_slashes=False)
-def auth_session_login():
-    """ this is a comment """
+def login() -> str:
+    """ POST /auth_session/login
+    """
+    user_email = request.form.get('email')
+    user_password = request.form.get('password')
 
-    email = request.form.get('email')
-    password = request.form.get('password')
-
-    if not email:
+    if not user_email:
         return jsonify({"error": "email missing"}), 400
-    if not password:
+    if not user_password:
         return jsonify({"error": "password missing"}), 400
 
-    users = User.search({"email": email})
-    if not users or len(users) == 0:
+    users = User.search({'email': user_email})
+    if not users:
         return jsonify({"error": "no user found for this email"}), 404
-
     user = users[0]
-
-    if not user.is_valid_password(password):
+    if not user.is_valid_password(user_password):
         return jsonify({"error": "wrong password"}), 401
 
     from api.v1.app import auth
-
     session_id = auth.create_session(user.id)
 
     response = jsonify(user.to_json())
-
-    session_name = os.getenv("SESSION_NAME", "_my_session_id")
-    response.set_cookie(session_name, session_id)
-
+    response.set_cookie(
+        key=os.getenv("SESSION_NAME"),
+        value=session_id
+    )
     return response
 
 
-@app_views.route(
-    "/auth_session/logout", methods=["DELETE"], strict_slashes=False
-)
-def auth_session_logout():
-    """ this is a comment """
+@app_views.route('/auth_session/logout',
+                 methods=['DELETE'], strict_slashes=False)
+def logout():
+    """ DELETE /api/v1/auth_session/logout
+    Return:
+      - Empty JSON dictionnary with 200 code
+    """
     from api.v1.app import auth
 
     if not auth.destroy_session(request):
         abort(404)
-
     return jsonify({}), 200
