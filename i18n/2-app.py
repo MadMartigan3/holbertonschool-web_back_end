@@ -45,9 +45,9 @@ def index():
     Render the translated home page.
 
     Returns:
-        str: Rendered HTML of templates/3-index.html.
+        str: Rendered HTML of templates/2-index.html.
     """
-    return render_template("3-index.html")
+    return render_template("2-index.html")
 
 
 if __name__ == "__main__":
