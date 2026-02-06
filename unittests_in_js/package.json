@@ -1,7 +1,7 @@
 {
   "name": "task_0",
   "version": "1.0.0",
-  "description": "Basic unit tests with Mocha and Chai",
+  "description": "Basic unit tests with Mocha, Chai, and Sinon",
   "main": "0-calcul.js",
   "scripts": {
     "test": "mocha \"*.test.js\""
@@ -10,7 +10,8 @@
   "author": "",
   "license": "ISC",
   "devDependencies": {
+    "mocha": "^10.2.0",
     "chai": "^4.3.10",
-    "mocha": "^10.2.0"
+    "sinon": "^17.0.1"
   }
 }
