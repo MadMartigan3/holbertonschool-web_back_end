@@ -1,0 +1,180 @@
+const { expect } = require('chai');
+const calculateNumber = require('./2-calcul_chai');
+
+describe('calculateNumber', function() {
+  describe('type SUM', function() {
+    it('should return the sum of two positive integers', function() {
+      expect(calculateNumber('SUM', 1, 3)).to.equal(4);
+    });
+
+    it('should return the sum when both numbers are rounded down', function() {
+      expect(calculateNumber('SUM', 1.4, 4.5)).to.equal(6);
+    });
+
+    it('should return the sum when first number is rounded down', function() {
+      expect(calculateNumber('SUM', 1.2, 3.7)).to.equal(5);
+    });
+
+    it('should return the sum when second number is rounded up', function() {
+      expect(calculateNumber('SUM', 1, 3.7)).to.equal(5);
+    });
+
+    it('should return the sum when both numbers are rounded up', function() {
+      expect(calculateNumber('SUM', 1.5, 3.7)).to.equal(6);
+    });
+
+    it('should handle negative numbers', function() {
+      expect(calculateNumber('SUM', -1.4, -4.5)).to.equal(-5);
+    });
+
+    it('should handle zero', function() {
+      expect(calculateNumber('SUM', 0, 0)).to.equal(0);
+    });
+
+    it('should handle mixed positive and negative', function() {
+      expect(calculateNumber('SUM', -1.4, 4.5)).to.equal(4);
+    });
+  });
+
+  describe('type SUBTRACT', function() {
+    it('should return the subtraction of two positive integers', function() {
+      expect(calculateNumber('SUBTRACT', 3, 1)).to.equal(2);
+    });
+
+    it('should return the subtraction when both numbers are rounded', function() {
+      expect(calculateNumber('SUBTRACT', 1.4, 4.5)).to.equal(-4);
+    });
+
+    it('should return the subtraction when first is rounded down', function() {
+      expect(calculateNumber('SUBTRACT', 1.2, 3.7)).to.equal(-3);
+    });
+
+    it('should return the subtraction when second is rounded up', function() {
+      expect(calculateNumber('SUBTRACT', 5, 3.7)).to.equal(1);
+    });
+
+    it('should return the subtraction when both are rounded up', function() {
+      expect(calculateNumber('SUBTRACT', 1.5, 3.7)).to.equal(-2);
+    });
+
+    it('should handle negative numbers', function() {
+      expect(calculateNumber('SUBTRACT', -1.4, -4.5)).to.equal(3);
+    });
+
+    it('should handle subtracting zero', function() {
+      expect(calculateNumber('SUBTRACT', 5, 0)).to.equal(5);
+    });
+
+    it('should handle subtracting from zero', function() {
+      expect(calculateNumber('SUBTRACT', 0, 5.2)).to.equal(-5);
+    });
+
+    it('should handle mixed positive and negative', function() {
+      expect(calculateNumber('SUBTRACT', -1.4, 4.5)).to.equal(-6);
+    });
+  });
+
+  describe('type DIVIDE', function() {
+    it('should return the division of two positive integers', function() {
+      expect(calculateNumber('DIVIDE', 4, 2)).to.equal(2);
+    });
+
+    it('should return the division when both numbers are rounded', function() {
+      expect(calculateNumber('DIVIDE', 1.4, 4.5)).to.equal(0.2);
+    });
+
+    it('should return the division when first is rounded up', function() {
+      expect(calculateNumber('DIVIDE', 4.5, 2)).to.equal(2.5);
+    });
+
+    it('should return the division when second is rounded down', function() {
+      expect(calculateNumber('DIVIDE', 8, 2.2)).to.equal(4);
+    });
+
+    it('should return the division when both are rounded', function() {
+      expect(calculateNumber('DIVIDE', 8.6, 2.4)).to.equal(4.5);
+    });
+
+    it('should handle negative numbers', function() {
+      expect(calculateNumber('DIVIDE', -9, 3)).to.equal(-3);
+    });
+
+    it('should handle dividing negative by positive', function() {
+      expect(calculateNumber('DIVIDE', -8.6, 2.4)).to.equal(-4.5);
+    });
+
+    it('should handle dividing positive by negative', function() {
+      expect(calculateNumber('DIVIDE', 8.6, -2.4)).to.equal(-4.5);
+    });
+
+    it('should handle dividing two negatives', function() {
+      expect(calculateNumber('DIVIDE', -8.6, -2.4)).to.equal(4.5);
+    });
+
+    describe('division by zero', function() {
+      it('should return Error when dividing by 0', function() {
+        expect(calculateNumber('DIVIDE', 1.4, 0)).to.equal('Error');
+      });
+
+      it('should return Error when dividing by a number that rounds to 0', function() {
+        expect(calculateNumber('DIVIDE', 1.4, 0.2)).to.equal('Error');
+      });
+
+      it('should return Error when dividing by a negative that rounds to 0', function() {
+        expect(calculateNumber('DIVIDE', 1.4, -0.2)).to.equal('Error');
+      });
+
+      it('should return Error when dividing by 0.4', function() {
+        expect(calculateNumber('DIVIDE', 1.4, 0.4)).to.equal('Error');
+      });
+
+      it('should return Error when dividing zero by zero', function() {
+        expect(calculateNumber('DIVIDE', 0, 0)).to.equal('Error');
+      });
+
+      it('should not return Error when dividing by 0.5 (rounds to 1)', function() {
+        expect(calculateNumber('DIVIDE', 4, 0.5)).to.equal(4);
+      });
+    });
+  });
+
+  describe('edge cases', function() {
+    it('should handle 0.5 rounding for SUM', function() {
+      expect(calculateNumber('SUM', 0.5, 0.5)).to.equal(2);
+    });
+
+    it('should handle 0.5 rounding for SUBTRACT', function() {
+      expect(calculateNumber('SUBTRACT', 0.5, 0.5)).to.equal(0);
+    });
+
+    it('should handle 0.5 rounding for DIVIDE', function() {
+      expect(calculateNumber('DIVIDE', 0.5, 0.5)).to.equal(1);
+    });
+
+    it('should handle large numbers with SUM', function() {
+      expect(calculateNumber('SUM', 1000.4, 2000.6)).to.equal(3001);
+    });
+
+    it('should handle large numbers with SUBTRACT', function() {
+      expect(calculateNumber('SUBTRACT', 2000.6, 1000.4)).to.equal(1001);
+    });
+
+    it('should handle large numbers with DIVIDE', function() {
+      expect(calculateNumber('DIVIDE', 1000.5, 10.5)).to.equal(91);
+    });
+  });
+
+  describe('invalid type', function() {
+    it('should return Error for invalid type', function() {
+      expect(calculateNumber('MULTIPLY', 1, 2)).to.equal('Error');
+    });
+
+    it('should return Error for empty type', function() {
+      expect(calculateNumber('', 1, 2)).to.equal('Error');
+    });
+
+    it('should return Error for lowercase type', function() {
+      expect(calculateNumber('sum', 1, 2)).to.equal('Error');
+    });
+  });
+});
